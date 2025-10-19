@@ -15,5 +15,4 @@ spring:
     show-sql: true
 
   liquibase:
-    enabled: false
-#    change-log: classpath:changelog/db.changelog-master.xml
+    change-log: classpath:changelog/db.changelog-master.xml

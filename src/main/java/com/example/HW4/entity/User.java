@@ -20,6 +20,9 @@ public class User {
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "create_at")
+    private LocalDateTime create_at;
+
     public User() {}
 
     public User(String name, String email, Integer age) {
@@ -46,7 +49,7 @@ public class User {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime create_at = LocalDateTime.now();
+        create_at = LocalDateTime.now();
     }
 }
 

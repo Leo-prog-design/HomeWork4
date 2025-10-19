@@ -15,7 +15,7 @@
             </column>
             <column name="email" type="varchar(255)"/>
             <column name="age" type="integer"/>
-            <column name="createAt" type="date"/>
+            <column name="create_at" type="date"/>
         </createTable>
     </changeSet>
 
