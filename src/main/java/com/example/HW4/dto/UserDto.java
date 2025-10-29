@@ -3,9 +3,12 @@ package com.example.HW4.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 @Schema(description = "Информация о пользователе")
-public class UserDto {
+@Relation(collectionRelation = "users")
+public class UserDto extends RepresentationModel<UserDto> {
 
     @NotBlank(message="Имя обязательно")
     @Schema(description = "Имя пользователя")

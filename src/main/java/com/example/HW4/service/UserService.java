@@ -1,6 +1,7 @@
 package com.example.HW4.service;
 
 import com.example.HW4.KafkaProducer;
+import com.example.HW4.UserModelAssembler;
 import com.example.HW4.dto.UserDto;
 import com.example.HW4.dto.UserInformationForKafkaDto;
 import com.example.HW4.entity.User;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//Producer
 @Service
 @Transactional
 public class UserService {
@@ -25,6 +25,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserInformationForKafkaMapper userInformationForKafkaMapper;
     private final KafkaProducer kafkaProducer;
+    private final UserModelAssembler assembler;
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
@@ -32,17 +33,20 @@ public class UserService {
             UserRepository userRepository,
             UserMapper userMapper,
             UserInformationForKafkaMapper userInformationForKafkaMapper,
-            KafkaProducer kafkaProducer
+            KafkaProducer kafkaProducer,
+            UserModelAssembler userModelAssembler
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userInformationForKafkaMapper = userInformationForKafkaMapper;
         this.kafkaProducer = kafkaProducer;
+        this.assembler = userModelAssembler;
     }
 
     public UserDto createUser(User user) {
         try {
-            UserDto userDto = userMapper.userToDto(userRepository.save(user));
+            User savedUser = userRepository.save(user);
+            UserDto userDto = assembler.toModel(savedUser);
 
             UserInformationForKafkaDto userInfoDto = userInformationForKafkaMapper.userToDto(user);
             userInfoDto.setStatus("Создан");
@@ -62,20 +66,28 @@ public class UserService {
             newUser.setName(user.getName());
             newUser.setAge(user.getAge());
 
-            return userMapper.userToDto(userRepository.save(newUser));
+            return assembler.toModel(userRepository.save(newUser));
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка, пользователь не изменён");
         }
-
     }
 
     public List<UserDto> readUsers() {
         try {
             List<User> users = userRepository.findAll();
             return users.stream()
-                    .map(userMapper::userToDto)
+                    .map(assembler::toModel)
                     .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Ошибка");
+        }
+    }
+
+    public UserDto readUserById(Long id) {
+        try {
+            return assembler.toModel(
+                    userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Пользователь с таким id не найден")));
         } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка");
         }

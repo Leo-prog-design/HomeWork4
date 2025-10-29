@@ -28,6 +28,11 @@ public class UserController implements UserControllerApi {
     }
 
     @Override
+    public ResponseEntity<UserDto> getUserById(Long id) {
+        return new ResponseEntity<>(userService.readUserById(id), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<UserDto> updateUser(Long id, User user) {
         return new ResponseEntity<>(userService.updateUserById(id, user), HttpStatus.OK);
     }

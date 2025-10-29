@@ -24,7 +24,7 @@ public interface UserControllerApi {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Книга успешно создана",
+                    description = "Пользователь успешно создана",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))
             ),
             @ApiResponse(
@@ -56,8 +56,31 @@ public interface UserControllerApi {
                     content = @Content(mediaType = "application/json")
             )
     })
-    @GetMapping(value = "/api/users/{id}", produces = "application/json")
+    @GetMapping(value = "/api/users", produces = "application/json")
     ResponseEntity<List<UserDto>> getAllUsers();
+
+
+    @Operation(
+            summary = "Получение пользователя по id",
+            description = "API метод для получения пользователя"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Пользователь успешно получен",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto[].class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Пользователи не найдены",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @GetMapping(value = "/api/users/{id}", produces = "application/json")
+    ResponseEntity<UserDto> getUserById(
+            @Parameter(description = "ID пользователя", required = true)
+            @PathVariable Long id
+    );
 
 
     @Operation(
